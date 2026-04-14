@@ -25,7 +25,6 @@ class PersonaMoral(
     val rfcSocio : String,
     val noPoliza : Int,
     val regimenCapital : String,
-    val actEconomica : String,
 ) : Persona(domicilioFiscal)
 
 data class DomicilioFiscal(
@@ -38,9 +37,9 @@ data class DomicilioFiscal(
     val nombreVialidad : String,
     val numeroExterior : Int,
     val numeroInterior : Int,
-    val entrecalle1 : Int,
-    val entrecalle2 : Int,
-    val referenciaAdicional : Int,
+    val entrecalle1 : String,
+    val entrecalle2 : String,
+    val referenciaAdicional : String,
     val caracteristicas : String,
     val actividadEconomica : String,
     val regimenFiscal : String
@@ -190,5 +189,21 @@ class StateListViewModel {
         {
             municipio.contribuidores.removeIf { it is PersonaMoral && it.rfcRepresentante.equals(identify) }
         }
+    }
+    fun AddPersona(est : String, mun : String, persona : Persona) : Boolean
+    {
+        val estado = states.find { it.nombre.lowercase().equals(est.lowercase()) }
+        if(estado == null) return false
+        val municipio = estado.municipios.find { it.nombre.lowercase().equals(mun.lowercase()) }
+        if(municipio == null) return false
+        if(municipio.contribuidores.find {
+            it is PersonaFisica && persona is PersonaFisica && it.curp.equals((persona as PersonaFisica).curp)  ||
+                it is PersonaMoral && persona is PersonaMoral &&
+                    it.rfcRepresentante.equals((persona as PersonaMoral).rfcRepresentante)
+        } == null) {
+            municipio.contribuidores.add(persona)
+            return true
+        }
+        return false
     }
 }

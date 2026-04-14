@@ -61,8 +61,8 @@ fun DetalleMun(nombreEstado : String, nombreMun : String, viewmodel : StateListV
         }
         var showDialog by remember { mutableStateOf(false) }
         var persona by remember { mutableStateOf(Persona(DomicilioFiscal("","","",
-            "","","","", 0,0,0,
-            0,0,"","",""))) }
+            "","","","", 0,0,"",
+            "","","","",""))) }
 
         Column(modifier = Modifier.fillMaxSize().padding(start = 16.dp, end = 16.dp).border(5.dp, Color.Black, RectangleShape)) {
             TextField(

@@ -22,6 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.ui.Alignment
 import com.pantherhm.cruddecontribuyentes.screens.AddEstadoScreen
 import com.pantherhm.cruddecontribuyentes.screens.AddMunScreen
+import com.pantherhm.cruddecontribuyentes.screens.AddPersona
 import com.pantherhm.cruddecontribuyentes.screens.DetalleMun
 import com.pantherhm.cruddecontribuyentes.screens.UpdateMun
 import com.pantherhm.cruddecontribuyentes.screens.UpdateState
@@ -74,6 +75,12 @@ fun AppNavHost(navController: NavHostController) {
                 val nombreEstado = backStackEntry.savedStateHandle.get<String>("nombreEstado") ?: ""
                 val nombreMun = backStackEntry.savedStateHandle.get<String>("nombreMun") ?: ""
                 DetalleMun(nombreEstado, nombreMun, viewmodel, navController)
+            }
+            composable ("addpersona/{nombreEstado}/{nombreMun}") {
+                backStackEntry ->
+                val nombreEstado = backStackEntry.savedStateHandle.get<String>("nombreEstado") ?: ""
+                val nombreMun = backStackEntry.savedStateHandle.get<String>("nombreMun") ?: ""
+                AddPersona(nombreEstado, nombreMun, viewmodel)
             }
         }
 
