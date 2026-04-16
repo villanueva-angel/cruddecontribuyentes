@@ -24,6 +24,7 @@ import com.pantherhm.cruddecontribuyentes.screens.AddEstadoScreen
 import com.pantherhm.cruddecontribuyentes.screens.AddMunScreen
 import com.pantherhm.cruddecontribuyentes.screens.AddPersona
 import com.pantherhm.cruddecontribuyentes.screens.DetalleMun
+import com.pantherhm.cruddecontribuyentes.screens.DetallePersona
 import com.pantherhm.cruddecontribuyentes.screens.UpdateMun
 import com.pantherhm.cruddecontribuyentes.screens.UpdatePersona
 import com.pantherhm.cruddecontribuyentes.screens.UpdateState
@@ -90,6 +91,14 @@ fun AppNavHost(navController: NavHostController) {
                 val tipo = backStackEntry.savedStateHandle.get<String>("tipo") ?: ""
                 val identify = backStackEntry.savedStateHandle.get<String>("identify") ?: ""
                 UpdatePersona(nombreEstado, nombreMun, tipo, identify, viewmodel)
+            }
+            composable("detallepersona/{nombreEstado}/{nombreMun}/{tipo}/{identify}"){
+                backStackEntry ->
+                val nombreEstado = backStackEntry.savedStateHandle.get<String>("nombreEstado") ?: ""
+                val nombreMun = backStackEntry.savedStateHandle.get<String>("nombreMun") ?: ""
+                val tipo = backStackEntry.savedStateHandle.get<String>("tipo") ?: ""
+                val identify = backStackEntry.savedStateHandle.get<String>("identify") ?: ""
+                DetallePersona(nombreEstado, nombreMun, tipo, identify, viewmodel)
             }
         }
 
