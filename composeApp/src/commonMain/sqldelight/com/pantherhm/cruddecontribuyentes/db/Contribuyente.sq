@@ -1,0 +1,146 @@
+-- Tabla Estado
+CREATE TABLE Estado (
+    id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre  TEXT    NOT NULL UNIQUE,
+    nab     TEXT    NOT NULL
+);
+
+-- Tabla Municipio (muchos municipios → un estado)
+CREATE TABLE Municipio (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre      TEXT    NOT NULL,
+    nab         TEXT    NOT NULL,
+    estado_id   INTEGER NOT NULL,
+    FOREIGN KEY (estado_id) REFERENCES Estado(id) ON DELETE CASCADE
+);
+
+-- Tabla PersonaFisica (incluye DomicilioFiscal)
+CREATE TABLE PersonaFisica (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    curp                TEXT    NOT NULL UNIQUE,
+    nombre_completo     TEXT    NOT NULL,
+    fecha_nac           TEXT    NOT NULL,
+    correo_elec         TEXT    NOT NULL,
+    tel                 TEXT    NOT NULL,
+    municipio_id        INTEGER NOT NULL,
+    -- DomicilioFiscal
+    cp                  TEXT    NOT NULL,
+    estado              TEXT    NOT NULL,
+    municipio           TEXT    NOT NULL,
+    localidad           TEXT    NOT NULL,
+    colonia             TEXT    NOT NULL,
+    vialidad            TEXT    NOT NULL,
+    nombre_vialidad     TEXT    NOT NULL,
+    numero_exterior     INTEGER NOT NULL,
+    numero_interior     INTEGER NOT NULL,
+    entrecalle1         TEXT    NOT NULL,
+    entrecalle2         TEXT    NOT NULL,
+    referencia_adicional TEXT   NOT NULL,
+    caracteristicas     TEXT    NOT NULL,
+    actividad_economica TEXT    NOT NULL,
+    regimen_fiscal      TEXT    NOT NULL,
+    FOREIGN KEY (municipio_id) REFERENCES Municipio(id) ON DELETE CASCADE
+);
+
+-- Tabla PersonaMoral (incluye DomicilioFiscal)
+CREATE TABLE PersonaMoral (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    razon_social        TEXT    NOT NULL,
+    fecha_const         TEXT    NOT NULL,
+    rfc_representante   TEXT    NOT NULL UNIQUE,
+    rfc_socio           TEXT    NOT NULL,
+    no_poliza           INTEGER NOT NULL,
+    regimen_capital     TEXT    NOT NULL,
+    municipio_id        INTEGER NOT NULL,
+    -- DomicilioFiscal
+    cp                  TEXT    NOT NULL,
+    estado              TEXT    NOT NULL,
+    municipio           TEXT    NOT NULL,
+    localidad           TEXT    NOT NULL,
+    colonia             TEXT    NOT NULL,
+    vialidad            TEXT    NOT NULL,
+    nombre_vialidad     TEXT    NOT NULL,
+    numero_exterior     INTEGER NOT NULL,
+    numero_interior     INTEGER NOT NULL,
+    entrecalle1         TEXT    NOT NULL,
+    entrecalle2         TEXT    NOT NULL,
+    referencia_adicional TEXT   NOT NULL,
+    caracteristicas     TEXT    NOT NULL,
+    actividad_economica TEXT    NOT NULL,
+    regimen_fiscal      TEXT    NOT NULL,
+    FOREIGN KEY (municipio_id) REFERENCES Municipio(id) ON DELETE CASCADE
+);
+
+-- ============ QUERIES Estado ============
+getAllEstados:
+SELECT * FROM Estado ORDER BY nombre ASC;
+
+insertEstado:
+INSERT INTO Estado(nombre, nab) VALUES (?, ?);
+
+updateEstado:
+UPDATE Estado SET nombre = ?, nab = ? WHERE id = ?;
+
+deleteEstado:
+DELETE FROM Estado WHERE id = ?;
+
+-- ============ QUERIES Municipio ============
+getAllMunicipiosByEstado:
+SELECT * FROM Municipio WHERE estado_id = ? ORDER BY nombre ASC;
+
+insertMunicipio:
+INSERT INTO Municipio(nombre, nab, estado_id) VALUES (?, ?, ?);
+
+updateMunicipio:
+UPDATE Municipio SET nombre = ?, nab = ? WHERE id = ?;
+
+deleteMunicipio:
+DELETE FROM Municipio WHERE id = ?;
+
+-- ============ QUERIES PersonaFisica ============
+getAllPersonasFisicas:
+SELECT * FROM PersonaFisica;
+
+getAllPersonasFisicasByMunicipio:
+SELECT * FROM PersonaFisica WHERE municipio_id = ?;
+
+insertPersonaFisica:
+INSERT INTO PersonaFisica(curp, nombre_completo, fecha_nac, correo_elec, tel,
+municipio_id, cp, estado, municipio, localidad, colonia, vialidad, nombre_vialidad,
+numero_exterior, numero_interior, entrecalle1, entrecalle2, referencia_adicional,
+caracteristicas, actividad_economica, regimen_fiscal)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updatePersonaFisica:
+UPDATE PersonaFisica SET curp = ?, nombre_completo = ?, fecha_nac = ?, correo_elec = ?,
+tel = ?, cp = ?, estado = ?, municipio = ?, localidad = ?, colonia = ?, vialidad = ?,
+nombre_vialidad = ?, numero_exterior = ?, numero_interior = ?, entrecalle1 = ?,
+entrecalle2 = ?, referencia_adicional = ?, caracteristicas = ?, actividad_economica = ?,
+regimen_fiscal = ? WHERE id = ?;
+
+deletePersonaFisica:
+DELETE FROM PersonaFisica WHERE id = ?;
+
+-- ============ QUERIES PersonaMoral ============
+getAllPersonasMorales:
+SELECT * FROM PersonaMoral;
+
+getAllPersonasMoralesByMunicipio:
+SELECT * FROM PersonaMoral WHERE municipio_id = ?;
+
+insertPersonaMoral:
+INSERT INTO PersonaMoral(razon_social, fecha_const, rfc_representante, rfc_socio,
+no_poliza, regimen_capital, municipio_id, cp, estado, municipio, localidad, colonia,
+vialidad, nombre_vialidad, numero_exterior, numero_interior, entrecalle1, entrecalle2,
+referencia_adicional, caracteristicas, actividad_economica, regimen_fiscal)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updatePersonaMoral:
+UPDATE PersonaMoral SET razon_social = ?, fecha_const = ?, rfc_representante = ?,
+rfc_socio = ?, no_poliza = ?, regimen_capital = ?, cp = ?, estado = ?, municipio = ?,
+localidad = ?, colonia = ?, vialidad = ?, nombre_vialidad = ?, numero_exterior = ?,
+numero_interior = ?, entrecalle1 = ?, entrecalle2 = ?, referencia_adicional = ?,
+caracteristicas = ?, actividad_economica = ?, regimen_fiscal = ? WHERE id = ?;
+
+deletePersonaMoral:
+DELETE FROM PersonaMoral WHERE id = ?;
