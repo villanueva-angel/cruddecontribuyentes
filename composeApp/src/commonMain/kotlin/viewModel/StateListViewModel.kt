@@ -1,8 +1,13 @@
 package viewModel
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import com.pantherhm.cruddecontribuyentes.data.ContribuyentesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class Estado(val id : Int, val nombre: String, val nab : String, var municipios: MutableList<Municipio>)
 data class Municipio(val id : Int, val nombre : String, val nab : String, var contribuidores: MutableList<Persona>)
@@ -81,6 +86,10 @@ class StateListViewModel(private val repository: ContribuyentesRepository) {
         Estado(30,"Sinaloa", "SIN", mutableStateListOf()),
         Estado(31, "MÃ­choacÃ¡n", "MIC", mutableStateListOf()),
     )
+
+    private val viewModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var syncJob: Job? = null
+    private var syncVersion = 0L
 
     var states = mutableStateListOf<Estado>()
 
@@ -208,13 +217,23 @@ class StateListViewModel(private val repository: ContribuyentesRepository) {
     }
 
     private fun syncStatesFromDatabase() {
-        val storedStates = repository.getAllStates()
-        if (storedStates.isEmpty()) {
-            repository.seedStates(defaultStates)
+        val requestedVersion = ++syncVersion
+        syncJob?.cancel()
+        syncJob = viewModelScope.launch {
+            val refreshedStates = withContext(Dispatchers.Default) {
+                val storedStates = repository.getAllStates()
+                if (storedStates.isEmpty()) {
+                    repository.seedStates(defaultStates)
+                }
+                repository.getAllStates()
+                    .sortedBy { it.nombre }
+            }
+
+            if (requestedVersion != syncVersion) return@launch
+
+            states.clear()
+            states.addAll(refreshedStates)
         }
-        states = repository.getAllStates()
-            .sortedBy { it.nombre }
-            .toMutableStateList()
     }
 
     private fun createAbbreviation(value: String): String {
